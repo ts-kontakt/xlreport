@@ -13,7 +13,8 @@ Project is created with:
 * Ament library version: 999
 
 ## Screenshots
-![Example test](KvYmeqXZcj.gif){:height="700px" width="400px"}
+
+<img src="KvYmeqXZcj.gif" width="545px" height="269px">
 <!-- If you have screenshots you'd like to share, include them here. -->
 
 	
