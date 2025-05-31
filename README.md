@@ -14,7 +14,7 @@ Project is created with:
 
 ## Screenshots
 
-<img src="KvYmeqXZcj.gif" width="545px" height="269px">
+<img src="KvYmeqXZcj.gif"  style="width:545px;max-width: 100%;max-height: 100%;">
 <!-- If you have screenshots you'd like to share, include them here. -->
 
 	
