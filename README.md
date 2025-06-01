@@ -15,7 +15,7 @@ header = ['col1', 'col2', 'col3', 'col4']
 #this is try to open file as well
 xl.save_list("test.xlsx", arr.tolist(), header, title="Test numpy")
 ```
-	
+ 
 ## Technologies
 Project is created with:
 * Lorem version: 12.3
@@ -23,13 +23,9 @@ Project is created with:
 * Ament library version: 999
 
 ## Screenshots
-
-
-
-
-<img src="xlreport-gnumeric.gif"  height="500" style="max-width: 100%;max-height: 100%;">
+<p align="center">
+<img src="xlreport-gnumeric.gif"   height="400" style="max-width: 100%;max-height: 100%;">
 <!-- If you have screenshots you'd like to share, include them here. -->
-
+</p>
 	
 ## Setup
-To run this project, install it locally using npm:
