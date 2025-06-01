@@ -1,10 +1,17 @@
 #!/usr/bin/python
-# coding=utf-8
+# coding=utf-8'
+#written by Tomasz Sługocki
 import os
 import subprocess
 import sys
 
 import xlsxwriter as xls
+
+FONT_SIZE = 9
+HEADER_FONT_NAME = "Arial"
+TITLE_RANGE = "B1:E1"
+HEADER_BG_COLOR = "#D4D0C8"
+HEADER_FONT_COLOR = "#003366"
 
 
 def ensure_unicode(input_value):
@@ -40,8 +47,7 @@ class Exfile(object):
         if worksheet_name:
             worksheet_name.upper()
         #global configs
-        FONT_SIZE = 9
-        HEADER_FONT_NAME = "Arial"
+
         worksheet = self.workbook.add_worksheet(ensure_unicode(worksheet_name))
         number_format = "#,##0;[Red]-#,##0"
         start_row = 4
@@ -58,13 +64,13 @@ class Exfile(object):
             "font_size": FONT_SIZE,
         })
 
-        worksheet.merge_range("B1:E1", ensure_unicode(title), merge_format)
+        worksheet.merge_range(TITLE_RANGE, ensure_unicode(title), merge_format)
 
         header_format = self.workbook.add_format()
         header_format.set_bold()
-        header_format.set_font_color("#003366")
+        header_format.set_font_color(HEADER_FONT_COLOR)
         header_format.set_font_size(9)
-        header_format.set_bg_color("#D4D0C8")
+        header_format.set_bg_color(HEADER_BG_COLOR)
 
         cell_format = self.workbook.add_format({
             "font_name": "Arial",
