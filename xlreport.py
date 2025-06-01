@@ -39,10 +39,14 @@ class Exfile(object):
         title.upper()
         if worksheet_name:
             worksheet_name.upper()
-
+        #global configs
         FONT_SIZE = 9
         HEADER_FONT_NAME = "Arial"
         worksheet = self.workbook.add_worksheet(ensure_unicode(worksheet_name))
+        number_format = "#,##0;[Red]-#,##0"
+        start_row = 4
+        start_column = 1
+        from math import log
 
         merge_format = self.workbook.add_format({
             "bold": 0,
@@ -55,8 +59,6 @@ class Exfile(object):
         })
 
         worksheet.merge_range("B1:E1", ensure_unicode(title), merge_format)
-
-        number_format = "#,##0;[Red]-#,##0"
 
         header_format = self.workbook.add_format()
         header_format.set_bold()
@@ -77,10 +79,6 @@ class Exfile(object):
 
         long_text_format = self.workbook.add_format({"text_wrap": True, "font_size": 8})
         long_text_format.set_align("vcenter")
-
-        start_row = 4
-        start_column = 1
-        from math import log
 
         def calculate_column_width(text_length):
             # Adjust column width based on header  text length
@@ -244,8 +242,6 @@ def system_info():
     return info
 
 
-
-
 def generate_random_data(num_rows=10):
     import random
     import string
@@ -257,6 +253,7 @@ def generate_random_data(num_rows=10):
         (0x0100, 0x017F),  # Latin Extended-A (more European characters)
         # (0x0370, 0x03FF),  # Greek and Coptic
     ]
+
     def gen_datetime(min_year=1900, max_year=datetime.now().year):
         # generate a datetime in format yyyy-mm-dd hh:mm:ss.000000
         start = datetime(min_year, 1, 1, 00, 00, 00)
