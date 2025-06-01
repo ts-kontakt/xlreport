@@ -27,7 +27,7 @@ Project is created with:
 
 
 
-<img src="KvYmeqXZcj.gif"  height="200" style="max-width: 100%;max-height: 100%;">
+<img src="KvYmeqXZcj.gif"   style="max-width: 100%;max-height: 100%;">
 <!-- If you have screenshots you'd like to share, include them here. -->
 
 	
