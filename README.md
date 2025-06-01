@@ -1,10 +1,20 @@
-## Test test
+## Nice formatted excel file from iterables (preferably list)
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Setup](#setup)
 
 ## General info
-This project is simple Lorem ipsum dolor generator.
+Generating nicely formatted excel file as easy as:
+```python
+import numpy as np
+from numpy.random import default_rng
+arr = default_rng(42).random((100, 4))
+
+import xlreport as xl
+header = ['col1', 'col2', 'col3', 'col4']
+#this is try to open file as well
+xl.save_list("test.xlsx", arr.tolist(), header, title="Test numpy")
+```
 	
 ## Technologies
 Project is created with:
