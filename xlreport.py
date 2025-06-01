@@ -264,12 +264,10 @@ def generate_random_data(num_rows=10):
     def get_random_unicode_char():
         """Get a random Unicode character from various language ranges."""
         range_start, range_end = random.choice(unicode_ranges)
-        # Generate random code point within the range
         code_point = random.randint(range_start, range_end)
         try:
             return chr(code_point)
         except ValueError:
-            # Fallback to a simple Unicode character if invalid
             return chr(random.randint(0x00C0, 0x00FF))
 
     result = []
