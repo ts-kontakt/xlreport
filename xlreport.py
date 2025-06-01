@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # coding=utf-8'
-#written by Tomasz Sługocki
+#
+# Copyright (c)  Tomasz Sługocki
+# This code is licensed under Apache 2.0
+from math import log
 import os
 import subprocess
 import sys
@@ -14,6 +17,17 @@ HEADER_BG_COLOR = "#D4D0C8"
 HEADER_FONT_COLOR = "#003366"
 
 
+def calculate_column_width(text_length):
+    # Adjust column width based on header  text length
+    extra_width = text_length / 10 + 10 if text_length > 20 else 0
+
+    if text_length <= 3:
+        return 3
+    else:
+        return (((51.16 * log(text_length) - 38.395) * 0.85) / 10 + (log(text_length) * 2) +
+                extra_width)
+
+
 def ensure_unicode(input_value):
     if "bytes" in repr(type(input_value)):
         return input_value.decode("utf8")
@@ -21,7 +35,6 @@ def ensure_unicode(input_value):
 
 
 def open_file(filename):
-
     if sys.platform == "win32":
         os.startfile(filename)
     else:
@@ -46,13 +59,12 @@ class Exfile(object):
         title.upper()
         if worksheet_name:
             worksheet_name.upper()
-        #global configs
+        # global configs
 
         worksheet = self.workbook.add_worksheet(ensure_unicode(worksheet_name))
         number_format = "#,##0;[Red]-#,##0"
         start_row = 4
         start_column = 1
-        from math import log
 
         merge_format = self.workbook.add_format({
             "bold": 0,
@@ -71,6 +83,7 @@ class Exfile(object):
         header_format.set_font_color(HEADER_FONT_COLOR)
         header_format.set_font_size(9)
         header_format.set_bg_color(HEADER_BG_COLOR)
+        header_format.set_indent(1)
 
         cell_format = self.workbook.add_format({
             "font_name": "Arial",
@@ -86,16 +99,6 @@ class Exfile(object):
         long_text_format = self.workbook.add_format({"text_wrap": True, "font_size": 8})
         long_text_format.set_align("vcenter")
 
-        def calculate_column_width(text_length):
-            # Adjust column width based on header  text length
-            extra_width = text_length / 10 + 10 if text_length > 20 else 0
-
-            if text_length <= 3:
-                return 3
-            else:
-                return (((51.16 * log(text_length) - 38.395) * 0.85) / 10 + (log(text_length) * 2) +
-                        extra_width)
-
         for column_index, header_value in enumerate(data_list[0]):
             text_length = len(repr(header_value))
             column_width = calculate_column_width(text_length)
@@ -108,7 +111,12 @@ class Exfile(object):
             if "str" in repr(type(header_value)):
                 header_value = ensure_unicode(header_value)
 
-            worksheet.write(start_row - 1, start_column + column_index, header_value, header_format)
+            worksheet.write(
+                start_row - 1,
+                start_column + column_index,
+                str(header_value).strip(),
+                header_format,
+            )
 
         for row_index, row_data in enumerate(data_list[1:]):
             current_row = start_row + row_index
@@ -158,7 +166,7 @@ class Exfile(object):
                             cell_value,
                             cell_format,
                         )
-
+        # worksheet.autofit() this is not working well
         return worksheet
 
     def add_links(self):
@@ -170,7 +178,7 @@ class Exfile(object):
             "font_color": "gray",
             "bold": 0,
             "underline": 1,
-            "font_size": 9,
+            # "font_size": 10,
         })
 
         for source_sheet in worksheets:
@@ -205,7 +213,7 @@ class Exfile(object):
             pass
 
 
-def save_list(xls_name, inlist, header_list=None, title="Title", shname="ark1", wrap=False):
+def save_list(xls_name, inlist, header_list=None, title="Title", shname="sheet1", wrap=False):
     exfile = Exfile(xls_name)
     if header_list:
         assert header_list.extend
@@ -225,27 +233,6 @@ def save_list(xls_name, inlist, header_list=None, title="Title", shname="ark1", 
             # close_file(xls_name)
             exfile.save()
             open_file(xls_name)
-
-
-def system_info():
-    import platform
-    import re
-    import socket
-
-    try:
-        info = {}
-        info["platform"] = platform.system()
-        info["platform-release"] = platform.release()
-        info["platform-version"] = platform.version()
-        info["architecture"] = platform.machine()
-        info["hostname"] = socket.gethostname()
-        info["ip-address"] = socket.gethostbyname(socket.gethostname())
-        info["mac-address"] = ":".join(re.findall("..", "%012x" % uuid.getnode()))
-        info["processor"] = platform.processor()
-        info["ram"] = str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB"
-    except Exception as e:
-        print(sys.exc_info())
-    return info
 
 
 def generate_random_data(num_rows=10):
@@ -293,24 +280,73 @@ def generate_random_data(num_rows=10):
 
 def get_packages():
     try:
-        import pkg_resourcesx
+        import pkg_resources
+
         dists = [repr(d).split(" ") for d in sorted(pkg_resources.working_set)]
         dists = sorted(dists, key=lambda x: x[0].lower())
-        header_list = ["name", "ver", "full package path"]
+        header_list = ["name        ", "ver  ", "full package path"]
         dists.insert(0, header_list)
     except ModuleNotFoundError:
-        print(f'Error loading module pkg_resources - using random data')
+        print(f"Error loading module pkg_resources - using random data")
         dists = generate_random_data(num_rows=100)
-        dists.insert(0, ['name1', 'name2', 'name3', 'name4', 'name5', 'name6'])
+        dists.insert(0, ["name1", "name2", "name3", "name4", "name5", "name6"])
     return dists
 
 
-def test():
-    save_list('test.xlsx', get_packages(), title='Test data')
+def test_colwidth():
+    import pandas as pd
+    import re
+
+    # print(pd._build_option_description)
+    a = pd.describe_option(_print_desc=False)
+
+    outlist = []
+    for line in a.split("\n"):
+        if re.search("^[a-z]", line):
+            data = [line, " -> "]
+        else:
+            data = [" ", line]
+        outlist.append(data)
+    header = ["Option             ", "Description           "]
+    save_list("test.xlsx", outlist, header_list=header, title="All pandas registered options")
 
 
-def test2():
-    outfile = "test2.xlsx"
+def test_simple():
+    save_list("test.xlsx", get_packages(), title="Current user python packages")
+
+
+def test_numpy():
+    import numpy as np
+    from numpy.random import default_rng
+    arr = default_rng(42).random((100, 4))
+
+    header = ['col1', 'col2', 'col3', 'col4']
+    save_list("test.xlsx", arr.tolist(), header, title="Test numpy")
+
+
+def test_multisheets():
+
+    def system_info():
+        import platform
+        import re
+        import socket
+
+        try:
+            info = {}
+            info["platform"] = platform.system()
+            info["platform-release"] = platform.release()
+            info["platform-version"] = platform.version()
+            info["architecture"] = platform.machine()
+            info["hostname"] = socket.gethostname()
+            info["ip-address"] = socket.gethostbyname(socket.gethostname())
+            info["mac-address"] = ":".join(re.findall("..", "%012x" % uuid.getnode()))
+            info["processor"] = platform.processor()
+            info["ram"] = (str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB")
+        except Exception as e:
+            print(sys.exc_info())
+        return info
+
+    outfile = "test_multisheets.xlsx"
     exfile = Exfile(outfile)
     exfile.write(get_packages(), "First Title")
     exfile.write(generate_random_data(20), "Random data")
@@ -321,5 +357,7 @@ def test2():
 
 
 if __name__ == "__main__":
-    # test()
-    test2()
+    test_numpy()
+    # test_simple()
+    # test_colwidth()
+    # test_multisheets()
