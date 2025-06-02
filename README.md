@@ -13,7 +13,8 @@ arr = default_rng(42).random((100, 4)) #generate some random data
 
 import xlreport as xl
 header = ['col1', 'col2', 'col3', 'col4']
-xl.save_list("test.xlsx", arr. header, title="Test numpy") #save data to excel and immediately open the file
+#save data to excel and immediately open the file
+xl.save_list("test.xlsx", arr. header, title="Test numpy") 
 ```
 
  
@@ -25,19 +26,20 @@ Example of multisheet file.
 By default, the header cells are frozen to make it easier to browse multiple rows of data.
 
 ```python
-    #some example data
-    import xlreport as xl
-    data1 = get_packages()
-    data2 = generate_random_data(20)
-    data3 = [(x, y) for x, y in system_info().items()]
-    #create file
-    exfile = xl.Exfile("test_multisheet_file.xlsx")
-    exfile.write(data1, title="Current user packages")
-    exfile.write(data2, title="Random data")
-    exfile.write(data3, title="System Info", wrap=True)
-    exfile.add_links()
-    exfile.save()
-    xl.open_file("test_multisheet_file.xlsx")
+
+import xlreport as xl
+#some example data
+data1 = xl.get_packages()
+data2 = xl.generate_random_data(20)
+data3 = [(x, y) for x, y in xl.system_info().items()]
+#create file
+exfile = xl.Exfile("test_multisheet_file.xlsx")
+exfile.write(data1, title="Current user packages")
+exfile.write(data2, title="Random data")
+exfile.write(data3, title="System Info", wrap=True)
+exfile.add_links()
+exfile.save()
+xl.open_file("test_multisheet_file.xlsx")
 ```
 
 <p align="center">
@@ -46,7 +48,7 @@ By default, the header cells are frozen to make it easier to browse multiple row
 </p>
 
 
-You can also easily set the width of the columns. In practice, it turned out that the easiest way is to just add spaces to the headers than entering nubmers.
+You can also easily set the width of the columns. In practice, it turned out that the easiest way is to just add spaces to the headers than entering width nubmers.
 
 ```python
 header = ["Normal column    ", "Description - longer column          "]
