@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding=utf-8'
 #
-# Copyright (c)  Tomasz Sługocki
+# Copyright (c)  Tomasz Sługocki ts.kontakt@gmail.com
 # This code is licensed under Apache 2.0
 from math import log
 import os
@@ -217,6 +217,12 @@ def save_list(xls_name, inlist, header_list=None, title="Title", shname="sheet1"
     exfile = Exfile(xls_name)
     if header_list:
         assert header_list.extend
+        if hasattr(inlist, 'to_records'):
+            print(type(inlist))
+            inlist = list(inlist.to_records())
+        if hasattr(inlist, 'tolist'):
+            inlist = inlist.tolist()
+
         inlist.insert(0, header_list)
     exfile.write(inlist, title, shname, wrap=wrap)
     try:
@@ -263,7 +269,9 @@ def generate_random_data(num_rows=10):
         except ValueError:
             return chr(random.randint(0x00C0, 0x00FF))
 
-    result = []
+    header = ['col1', 'col2', 'col3', 'col4', 'col5', 'col6']
+
+    result = [header]
     for _ in range(num_rows):
         row = [
             random.choice(string.ascii_letters),
@@ -320,44 +328,54 @@ def test_numpy():
     from numpy.random import default_rng
     arr = default_rng(42).random((100, 4))
 
+    # import pandas as pd
+
+    # df  = pd.DataFrame(arr)
+
     header = ['col1', 'col2', 'col3', 'col4']
-    save_list("test.xlsx", arr.tolist(), header, title="Test numpy")
+    save_list("test.xlsx", arr, header, title="Test numpy")
+
+
+def system_info():
+    import platform
+    import re
+    import socket
+
+    try:
+        info = {}
+        info["platform"] = platform.system()
+        info["platform-release"] = platform.release()
+        info["platform-version"] = platform.version()
+        info["architecture"] = platform.machine()
+        info["hostname"] = socket.gethostname()
+        info["ip-address"] = socket.gethostbyname(socket.gethostname())
+        info["mac-address"] = ":".join(re.findall("..", "%012x" % uuid.getnode()))
+        info["processor"] = platform.processor()
+        info["ram"] = (str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB")
+    except Exception as e:
+        print(sys.exc_info())
+    return info
 
 
 def test_multisheets():
 
-    def system_info():
-        import platform
-        import re
-        import socket
-
-        try:
-            info = {}
-            info["platform"] = platform.system()
-            info["platform-release"] = platform.release()
-            info["platform-version"] = platform.version()
-            info["architecture"] = platform.machine()
-            info["hostname"] = socket.gethostname()
-            info["ip-address"] = socket.gethostbyname(socket.gethostname())
-            info["mac-address"] = ":".join(re.findall("..", "%012x" % uuid.getnode()))
-            info["processor"] = platform.processor()
-            info["ram"] = (str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB")
-        except Exception as e:
-            print(sys.exc_info())
-        return info
-
-    outfile = "test_multisheets.xlsx"
-    exfile = Exfile(outfile)
-    exfile.write(get_packages(), "First Title")
-    exfile.write(generate_random_data(20), "Random data")
-    exfile.write([(x, y) for x, y in system_info().items()], "System Info", wrap=True)
+    #some example data
+    data1 = get_packages()
+    data2 = generate_random_data(20)
+    data3 = [(x, y) for x, y in system_info().items()]
+    #create file
+    exfile = Exfile("test_multisheet_file.xlsx")
+    exfile.write(data1, title="Current user packages")
+    exfile.write(data2, title="Random data")
+    exfile.write(data3, title="System Info", wrap=True)
     exfile.add_links()
     exfile.save()
-    open_file(outfile)
+    open_file("test_multisheet_file.xlsx")
 
 
 if __name__ == "__main__":
-    test_numpy()
+    # test_numpy()
+    # stop
     # test_simple()
     # test_colwidth()
-    # test_multisheets()
+    test_multisheets()
