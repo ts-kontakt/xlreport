@@ -4,14 +4,16 @@
 ## Core Functionality
 Xlreport is a Python module created for efficient and rapid data transfer to Excel spreadsheets. It generates well-formatted Excel files from tabular data with minimal programmatic overhead.
 ```python
-import numpy as np
+#generate some random data
 from numpy.random import default_rng
-arr = default_rng(42).random((100, 4)) #generate some random data
+arr = default_rng(42).random((100, 4))
 
+
+# Save data to an Excel file and immediately invoke the default application to open it (does not have to be ms excel)
 import xlreport as xl
 header = ['col1', 'col2', 'col3', 'col4']
-# Save data to an Excel file and immediately invoke the default application to open it
-xl.save_list("test.xlsx", arr. header, title="Test numpy") 
+xl.to_file("test.xlsx", arr, header, title="Test numpy")
+
 ```
 
  
@@ -20,15 +22,19 @@ It is a useful tool for data inspection, as well as for simply creating reports.
 ## Screenshots
 
 Example of multisheet file.
-By default, the header cells are frozen to make it easier to browse multiple rows of data.
+By default, the header cells are frozen to make it easier to browse multiple rows of data. (see: [test_xlreport.py](test_xlreport.py))
+
+
 
 ```python
 
 import xlreport as xl
+
 # get some diverse datasets for demonstration
-data1 = xl.get_packages()
-data2 = xl.generate_random_data(20)
-data3 = [(x, y) for x, y in xl.system_info().items()]
+data1 = get_packages()
+data2 = generate_random_data(20)
+data3 = [(x, y) for x, y in system_info().items()]
+data3 = [(x, y) for x, y in system_info().items()]
 
 # Construct and populate a multi-sheet Excel file
 exfile = xl.Exfile("test_multisheet_file.xlsx")
@@ -36,9 +42,7 @@ exfile.write(data1, title="Current user packages")
 exfile.write(data2, title="Random data")
 exfile.write(data3, title="System Info", wrap=True)
 exfile.add_links()
-exfile.save()
-
-xl.open_file("test_multisheet_file.xlsx")
+exfile.save(start=True)
 ```
 
 <p align="center">
