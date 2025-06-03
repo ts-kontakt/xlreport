@@ -3,10 +3,11 @@
 #
 # Copyright (c)  Tomasz Sługocki ts.kontakt@gmail.com
 # This code is licensed under Apache 2.0
-from math import log
 import os
+import re
 import subprocess
 import sys
+from math import log
 
 import xlsxwriter as xls
 
@@ -15,17 +16,6 @@ HEADER_FONT_NAME = "Arial"
 TITLE_RANGE = "B1:E1"
 HEADER_BG_COLOR = "#D4D0C8"
 HEADER_FONT_COLOR = "#003366"
-
-
-def calculate_column_width(text_length):
-    # Adjust column width based on header  text length
-    extra_width = text_length / 10 + 10 if text_length > 20 else 0
-
-    if text_length <= 3:
-        return 3
-    else:
-        return (((51.16 * log(text_length) - 38.395) * 0.85) / 10 + (log(text_length) * 2) +
-                extra_width)
 
 
 def ensure_unicode(input_value):
@@ -52,9 +42,24 @@ class Exfile(object):
         file_path = (filename if os.sep in filename else os.path.join(os.getcwd(), filename))
         self.file_path = file_path
 
+    @staticmethod
+    def calculate_column_width(text_length):
+        # Adjust column width based on header  text length
+        extra_width = text_length / 10 + 10 if text_length > 20 else 0
+
+        if text_length <= 3:
+            return 3
+        else:
+            return (((51.16 * log(text_length) - 38.395) * 0.85) / 10 + (log(text_length) * 2) +
+                    extra_width)
+
     def write(self, data_list, title, worksheet_name=None, wrap=False):
-        assert (isinstance(data_list[0], list) or isinstance(data_list[0], tuple) or
-                "numpy." in repr(type(data_list[0])) or "dict_values" in repr(data_list[0]))
+        datatype = repr(type(data_list)).lower()
+        assert re.search("list|dict_values|dataframe|array|tuple|set", datatype)
+        if "dataframe" in datatype:
+            new_list = [["idx"] + list(data_list.columns)]
+            new_list.extend(data_list.to_records())
+            data_list = new_list
 
         title.upper()
         if worksheet_name:
@@ -86,7 +91,7 @@ class Exfile(object):
         header_format.set_indent(1)
 
         cell_format = self.workbook.add_format({
-            "font_name": "Arial",
+            "font_name": HEADER_FONT_NAME,
             "font_size": FONT_SIZE,
             "num_format": number_format,
         })
@@ -101,7 +106,7 @@ class Exfile(object):
 
         for column_index, header_value in enumerate(data_list[0]):
             text_length = len(repr(header_value))
-            column_width = calculate_column_width(text_length)
+            column_width = self.calculate_column_width(text_length)
             worksheet.set_column(start_column + column_index, start_column + column_index,
                                  column_width)
 
@@ -166,7 +171,6 @@ class Exfile(object):
                             cell_value,
                             cell_format,
                         )
-        # worksheet.autofit() this is not working well
         return worksheet
 
     def add_links(self):
@@ -201,9 +205,12 @@ class Exfile(object):
                     )
                 link_index += 1
 
-    def save(self):
+    def save(self, start=True):
         try:
             self.workbook.close()
+            if start:
+                open_file(self.file_path)
+
         except BaseException:
             print(sys.exc_info())
             if "denied" in repr(sys.exc_info()):
@@ -213,32 +220,25 @@ class Exfile(object):
             pass
 
 
-def save_list(xls_name, inlist, header_list=None, title="Title", shname="sheet1", wrap=False):
+def to_file(xls_name, inlist, header_list=None, title="Title", shname="sheet1", wrap=False):
+    assert "str" in repr(type(xls_name))
     exfile = Exfile(xls_name)
     if header_list:
         assert header_list.extend
-        if hasattr(inlist, 'to_records'):
-            print(type(inlist))
+        if hasattr(inlist, "to_records"):
             inlist = list(inlist.to_records())
-        if hasattr(inlist, 'tolist'):
+        if hasattr(inlist, "tolist"):
             inlist = inlist.tolist()
 
         inlist.insert(0, header_list)
     exfile.write(inlist, title, shname, wrap=wrap)
     try:
         exfile.save()
-        open_file(xls_name)
     except BaseException:
-        if "permission" in repr(sys.exc_info()).lower():
-            # works on windows only, requires nicmd utility
-            cmd = 'nircmd win close stitle "{xls_name}"'
-            (stdout, strerr) = subprocess.Popen(cmd, shell=True,
-                                                stdout=subprocess.PIPE).communicate()
-            print("!--", stdout)
-            print("---", strerr)
-            # close_file(xls_name)
-            exfile.save()
-            open_file(xls_name)
+        error_str = repr(sys.exc_info()).lower()
+        if "permission" in error_str:
+            print("!-File probably opened", error_str)
+            sys.exit()
 
 
 def generate_random_data(num_rows=10):
@@ -269,7 +269,7 @@ def generate_random_data(num_rows=10):
         except ValueError:
             return chr(random.randint(0x00C0, 0x00FF))
 
-    header = ['col1', 'col2', 'col3', 'col4', 'col5', 'col6']
+    header = ["col1", "col2", "col3", "col4", "col5", "col6"]
 
     result = [header]
     for _ in range(num_rows):
@@ -286,96 +286,27 @@ def generate_random_data(num_rows=10):
     return result
 
 
-def get_packages():
-    try:
-        import pkg_resources
-
-        dists = [repr(d).split(" ") for d in sorted(pkg_resources.working_set)]
-        dists = sorted(dists, key=lambda x: x[0].lower())
-        header_list = ["name        ", "ver  ", "full package path"]
-        dists.insert(0, header_list)
-    except ModuleNotFoundError:
-        print(f"Error loading module pkg_resources - using random data")
-        dists = generate_random_data(num_rows=100)
-        dists.insert(0, ["name1", "name2", "name3", "name4", "name5", "name6"])
-    return dists
-
-
-def test_colwidth():
-    import pandas as pd
-    import re
-
-    # print(pd._build_option_description)
-    a = pd.describe_option(_print_desc=False)
-
-    outlist = []
-    for line in a.split("\n"):
-        if re.search("^[a-z]", line):
-            data = [line, " -> "]
-        else:
-            data = [" ", line]
-        outlist.append(data)
-    header = ["Option             ", "Description           "]
-    save_list("test.xlsx", outlist, header_list=header, title="All pandas registered options")
-
-
-def test_simple():
-    save_list("test.xlsx", get_packages(), title="Current user python packages")
-
-
 def test_numpy():
-    import numpy as np
     from numpy.random import default_rng
+
     arr = default_rng(42).random((100, 4))
-
-    # import pandas as pd
-
-    # df  = pd.DataFrame(arr)
-
-    header = ['col1', 'col2', 'col3', 'col4']
-    save_list("test.xlsx", arr, header, title="Test numpy")
+    header = ["col1", "col2", "col3", "col4"]
+    to_file("test.xlsx", arr, header, title="Test numpy")
 
 
-def system_info():
-    import platform
-    import re
-    import socket
+def test_df():
+    import numpy as np
+    import pandas as pd
 
-    try:
-        info = {}
-        info["platform"] = platform.system()
-        info["platform-release"] = platform.release()
-        info["platform-version"] = platform.version()
-        info["architecture"] = platform.machine()
-        info["hostname"] = socket.gethostname()
-        info["ip-address"] = socket.gethostbyname(socket.gethostname())
-        info["mac-address"] = ":".join(re.findall("..", "%012x" % uuid.getnode()))
-        info["processor"] = platform.processor()
-        info["ram"] = (str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB")
-    except Exception as e:
-        print(sys.exc_info())
-    return info
-
-
-def test_multisheets():
-
-    #some example data
-    data1 = get_packages()
-    data2 = generate_random_data(20)
-    data3 = [(x, y) for x, y in system_info().items()]
-    #create file
-    exfile = Exfile("test_multisheet_file.xlsx")
-    exfile.write(data1, title="Current user packages")
-    exfile.write(data2, title="Random data")
-    exfile.write(data3, title="System Info", wrap=True)
-    exfile.add_links()
-    exfile.save()
-    open_file("test_multisheet_file.xlsx")
+    df = pd.DataFrame({
+        "col1": ["A", "A", False, np.nan, "D", "C"],
+        "col2": [2, 1, 9, -8, 7, -4],
+        "col3": [-0.8, 1, 9, 4, 2, 3],
+        "col4": ["a", "B", "c", "D", True, "F"],
+    })
+    to_file("testdf.xlsx", df, title="Test dataframe")
 
 
 if __name__ == "__main__":
     # test_numpy()
-    # stop
-    # test_simple()
-    # test_colwidth()
-    test_multisheets()
+    test_df()
