@@ -3,15 +3,15 @@
 #
 # Copyright (c)  Tomasz Sługocki ts.kontakt@gmail.com
 # This code is licensed under Apache 2.0
-import xlreport as xl
-import re
 import random
+import re
 import string
-import sys 
 from datetime import datetime, timedelta
 
-def generate_random_data(num_rows=10):
+import xlreport as xl
 
+
+def generate_random_data(num_rows=10):
     unicode_ranges = [
         (0x0020, 0x007E),  # Basic Latin (printable ASCII)
         (0x00A0, 0x00FF),  # Latin-1 Supplement (e.g., accented characters)
@@ -35,7 +35,7 @@ def generate_random_data(num_rows=10):
         except ValueError:
             return chr(random.randint(0x00C0, 0x00FF))
 
-    header = ['col1', 'col2', 'col3', 'col4', 'col5', 'col6']
+    header = ["col1", "col2", "col3", "col4", "col5", "col6"]
 
     result = [header]
     for _ in range(num_rows):
@@ -61,7 +61,7 @@ def get_packages():
         header_list = ["name        ", "ver  ", "full package path"]
         dists.insert(0, header_list)
     except ModuleNotFoundError:
-        print(f"Error loading module pkg_resources - using random data")
+        print("Error loading module pkg_resources - using random data")
         dists = generate_random_data(num_rows=100)
         dists.insert(0, ["name1", "name2", "name3", "name4", "name5", "name6"])
     return dists
@@ -69,6 +69,7 @@ def get_packages():
 
 def get_pandas_opts():
     import pandas as pd
+
     options_str = pd.describe_option(_print_desc=False)
     header = ["Option             ", "Description              "]
     outlist = [header]
@@ -83,7 +84,7 @@ def get_pandas_opts():
 
 def test_colwidth():
     opt_list = get_pandas_opts()
-    xl.to_file("test.xlsx", opt_list, title="All pandas registered options")
+    xl.to_file("test_colwidth.xlsx", opt_list, title="All pandas registered options")
 
 
 def test_simple():
@@ -92,15 +93,16 @@ def test_simple():
 
 def test_numpy():
     from numpy.random import default_rng
+
     arr = default_rng(42).random((100, 4))
-    header = ['col1', 'col2', 'col3', 'col4']
+    header = ["col1", "col2", "col3", "col4"]
     xl.to_file("test.xlsx", arr, header, title="Test numpy")
 
 
 def system_info():
     import platform
-    import re
     import socket
+
     try:
         info = {}
         info["platform"] = platform.system()
@@ -109,25 +111,23 @@ def system_info():
         info["architecture"] = platform.machine()
         info["hostname"] = socket.gethostname()
         info["ip-address"] = socket.gethostbyname(socket.gethostname())
-        info["mac-address"] = ":".join(re.findall("..", "%012x" % uuid.getnode()))
         info["processor"] = platform.processor()
-        info["ram"] = (str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB")
+        info["ram"] = str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB"
     except Exception as e:
         pass
         # print(sys.exc_info())
     return info
 
 
-
-
-
 def test_multisheets():
-    # some example data
-    data1 = get_pandas_opts()
+    import xlreport as xl
+
+    # get some diverse datasets for demonstration
+    data1 = get_packages()
     data2 = generate_random_data(20)
-    stop
-    data3 = [(x, y) for x, y in system_info().items()]
-    # create file
+    data3 = list(system_info().items())
+
+    # Construct and populate a multi-sheet Excel file
     exfile = xl.Exfile("test_multisheet_file.xlsx")
     exfile.write(data1, title="Current user packages")
     exfile.write(data2, title="Random data")
@@ -136,10 +136,8 @@ def test_multisheets():
     exfile.save(start=True)
 
 
-
 if __name__ == "__main__":
     test_simple()
     test_multisheets()
+    test_colwidth()
     # test_numpy()
-    # test_colwidth()
-    
