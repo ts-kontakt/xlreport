@@ -16,7 +16,8 @@ HEADER_FONT_NAME = "Arial"
 TITLE_RANGE = "B1:E1"
 HEADER_BG_COLOR = "#D4D0C8"
 HEADER_FONT_COLOR = "#003366"
-
+NUM_FORMAT = "0.00;[RED]-0.00"
+WRAP_FONT_SIZE = 9
 
 def ensure_unicode(input_value):
     if "bytes" in repr(type(input_value)):
@@ -98,10 +99,10 @@ class Exfile(object):
 
         decimal_format = self.workbook.add_format({
             "font_size": FONT_SIZE,
-            "num_format": "0.00;[RED]-0.00"
+            "num_format": NUM_FORMAT
         })
 
-        long_text_format = self.workbook.add_format({"text_wrap": True, "font_size": 8})
+        long_text_format = self.workbook.add_format({"text_wrap": True, "font_size": WRAP_FONT_SIZE})
         long_text_format.set_align("vcenter")
 
         for column_index, header_value in enumerate(data_list[0]):
