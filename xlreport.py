@@ -11,13 +11,14 @@ from math import log
 
 import xlsxwriter as xls
 
+HEADER_FONT_NAME = "Times"
+GEN_FONT_NAME = "Arial" 
 FONT_SIZE = 9
-HEADER_FONT_NAME = "Arial"
+WRAP_FONT_SIZE = 9
 TITLE_RANGE = "B1:E1"
 HEADER_BG_COLOR = "#D4D0C8"
 HEADER_FONT_COLOR = "#003366"
 NUM_FORMAT = "0.00;[RED]-0.00"
-WRAP_FONT_SIZE = 9
 
 
 def ensure_unicode(input_value):
@@ -78,13 +79,13 @@ class Exfile:
 
         merge_format = self.workbook.add_format(
             {
-                "bold": 0,
+                "bold": 1,
                 "border": 1,
                 "align": "center",
                 "fg_color": "#F1F1F1",
                 "text_wrap": True,
                 "font_name": HEADER_FONT_NAME,
-                "font_size": FONT_SIZE,
+                "font_size": 12,
             }
         )
 
@@ -99,7 +100,7 @@ class Exfile:
 
         cell_format = self.workbook.add_format(
             {
-                "font_name": HEADER_FONT_NAME,
+                "font_name": GEN_FONT_NAME,
                 "font_size": FONT_SIZE,
                 "num_format": number_format,
             }
