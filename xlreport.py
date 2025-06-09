@@ -19,7 +19,7 @@ TITLE_RANGE = "B1:E1"
 HEADER_BG_COLOR = "#D4D0C8"
 HEADER_FONT_COLOR = "#003366"
 NUM_FORMAT = "0.00;[RED]-0.00"
-
+TITLE_BG = "#F1F1F1"
 
 def ensure_unicode(input_value):
     if "bytes" in repr(type(input_value)):
@@ -82,7 +82,7 @@ class Exfile:
                 "bold": 1,
                 "border": 1,
                 "align": "center",
-                "fg_color": "#F1F1F1",
+                "fg_color": TITLE_BG,
                 "text_wrap": True,
                 "font_name": HEADER_FONT_NAME,
                 "font_size": 12,
