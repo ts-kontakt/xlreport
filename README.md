@@ -16,7 +16,7 @@ arr = default_rng(42).random((100, 4))
 
 # Save data to an Excel file and immediately invoke the default application to open it (does not have to be ms excel)
 import xlreport as xl
-header = ['col1', 'col2', 'col3', 'col4']
+header = 'col1 col2 col3 col4'.split(' ') 
 xl.to_file("test.xlsx", arr, header, title="Test numpy")
 
 ```
