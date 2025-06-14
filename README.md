@@ -2,7 +2,7 @@
 
 
 ## Basic Functionality
-Xlreport is a Python module created for efficient and rapid data transfer to Excel spreadsheets. 
+Xlreport is a Python module created for quick data transfer to Excel spreadsheets. 
 Xlreport has a single dependency: popular xlsxwriter package.
 In most cases, it is enough to use a simple ```to_file``` function, which writes a python object (list, tuple, dataframe, etc.) to a nicely formatted excel file.
 
@@ -20,7 +20,6 @@ header = ['col1', 'col2', 'col3', 'col4']
 xl.to_file("test.xlsx", arr, header, title="Test numpy")
 
 ```
-
  
 It is a useful tool for data inspection, as well as for simply creating reports. It is equally easy to create a file containing multiple sheets and links to them.
 
@@ -52,8 +51,8 @@ exfile.add_links()
 exfile.save(start=True)
 ```
 
-<p align="center">
-<img src="xlreport-gnumeric.gif"   height="400" style="max-width: 100%;max-height: 100%;">
+<p align="left">
+<img src="xlreport-gnumeric.gif"   width="500" style="max-width: 100%;max-height: 100%;">
 <!-- If you have screenshots you'd like to share, include them here. -->
 </p>
 
