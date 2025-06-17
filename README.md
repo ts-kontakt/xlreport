@@ -1,11 +1,7 @@
-# Xlreport – Streamlined Data Export to Excel
-
-
-## Basic Functionality
-Xlreport is a Python module created for quick data transfer to Excel spreadsheets. 
-Xlreport has a single dependency: popular xlsxwriter package.
-In most cases, it is enough to use a simple ```to_file``` function, which writes a python object (list, tuple, dataframe, etc.) to a nicely formatted excel file.
-
+# Xlreport – Easy Excel Export for Python objects
+## What it does
+Xlreport is a wrapper around xlsxwriter that makes it super easy to dump your data into Excel files. It takes care of all the formatting, so you don't have to mess with xlsxwriter's details. Most of the time, you'll just use the to_file function to throw whatever data you've got into a nicely formatted spreadsheet.
+While Xlreport is mainly designed for 2D data (think tables with rows and columns), it can handle 1D data too. If you pass in a single-dimension list or array, it'll just fill up one column in your Excel file - simple as that.
 
 
 ```python
@@ -61,7 +57,7 @@ exfile.save(start=True)
 
 Xlreport addresses common challenges associated with automatic column sizing in Excel. While xlsxwriter's worksheet.autofit() method can often produce undesirable results (e.g., excessively wide columns for long strings), Xlreport offers a pragmatic solution. Users can effectively control column widths by simply appending spaces to header strings, providing a straightforward method for layout optimization:
 
-This approach mitigates the need for manual width calculations.
+This means you don't have to manually calculate widths – just a few extra spaces, and your columns will look just right.
    
 
 ```python
