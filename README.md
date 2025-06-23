@@ -3,6 +3,11 @@
 Xlreport is a wrapper around xlsxwriter that makes it super easy to dump your data into Excel files. It takes care of all the formatting, so you don't have to mess with xlsxwriter's details. Most of the time, you'll just use the to_file function to throw whatever data you've got into a nicely formatted spreadsheet.
 While Xlreport is mainly designed for 2D data (think tables with rows and columns), it can handle 1D data too. If you pass in a single-dimension list or array, it'll just fill up one column in your Excel file - simple as that.
 
+### Installation
+```
+pip install xlreport
+```
+
 
 ```python
 #generate some random data
@@ -64,12 +69,6 @@ This means you don't have to manually calculate widths – just a few extra spac
 header = ["Normal column    ", "Description - longer column          "]
 ```
 
-## Installation
-To integrate Xlreport into your Python environment, simply place the xlreport.py file within your site-packages directory. You can locate this directory using:
-```python
-import site
-print(site.getusersitepackages())
-```
 
 ## Dependencies
 
