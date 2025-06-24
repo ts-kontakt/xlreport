@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8'
-#
-# Copyright (c)  Tomasz Sługocki ts.kontakt@gmail.com
-# This code is licensed under Apache 2.0
+# Copyright (c)  Tomasz Sługocki
 import random
 import re
 import string
@@ -95,7 +93,7 @@ def test_numpy():
     from numpy.random import default_rng
 
     arr = default_rng(42).random((100, 4))
-    header = ["col1", "col2", "col3", "col4"]
+    header = 'col1 col2 col3 col4'.split(' ')  #not actually needed
     xl.to_file("test.xlsx", arr, header, title="Test numpy")
 
 
@@ -112,16 +110,13 @@ def system_info():
         info["hostname"] = socket.gethostname()
         info["ip-address"] = socket.gethostbyname(socket.gethostname())
         info["processor"] = platform.processor()
-        info["ram"] = str(round(psutil.virtual_memory().total / (1024.0**3))) + " GB"
-    except Exception as e:
+    except Exception:
         pass
         # print(sys.exc_info())
     return info
 
 
 def test_multisheets():
-    import xlreport as xl
-
     # get some diverse datasets for demonstration
     data1 = get_packages()
     data2 = generate_random_data(20)
@@ -136,8 +131,11 @@ def test_multisheets():
     exfile.save(start=True)
 
 
+
+
+
 if __name__ == "__main__":
-    test_simple()
+    # test_simple()
     test_multisheets()
     test_colwidth()
     # test_numpy()
