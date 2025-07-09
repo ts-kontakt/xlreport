@@ -32,24 +32,6 @@ Xlreport works with various Python data structures:
 - **Sets** - Converted to list format
 - **1D data** - Single columns for simple lists
 
-## Features
-
-### 🎯 **Simple Data Export**
-Export any supported data structure with a single function call:
-
-```python
-import xlreport as xl
-
-# Simple list
-data = [1, 2, 3, 4, 5]
-xl.to_file("simple.xlsx", data, title="Simple List")
-
-# 2D data with headers
-data = [["Alice", 25], ["Bob", 30], ["Charlie", 35]]
-headers = ["Name", "Age"]
-xl.to_file("people.xlsx", data, headers, title="People Data")
-```
-
 ### 📊 **Multi-Sheet Excel Files**
 Create complex reports with multiple sheets and navigation links:
 
@@ -172,7 +154,7 @@ If you don't like spreadsheets there is better solution, check out **[df2tables]
 
 ## License
 
-This code is licensed under Apache 2.0
+This code is licensed under MIT
 
 ## Contributing
 
