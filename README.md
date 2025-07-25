@@ -1,4 +1,5 @@
 # Xlreport – Easy Excel Export for Python Objects
+[![Downloads](https://img.shields.io/pypi/dm/xlreport.svg)](https://pypi.org/project/xlreport/) [![PyPI version](https://img.shields.io/pypi/v/xlreport.svg)](https://pypi.org/project/xlreport/)
 
 Xlreport is a Python wrapper around [xlsxwriter](https://xlsxwriter.readthedocs.io/) that makes it super easy to dump your data into Excel files. It takes care of all the formatting, so you don't have to mess with xlsxwriter's details. Most of the time, you'll just use the `to_file` function to throw whatever data you've got into a nicely formatted spreadsheet.
 
