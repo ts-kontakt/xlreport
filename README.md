@@ -29,7 +29,7 @@ xl.to_file("test.xlsx", arr, header, title="Test numpy")
 Xlreport works with various Python data structures:
 - **Lists and tuples** - Regular Python sequences
 - **NumPy arrays** - Numerical arrays with automatic conversion
-- **Pandas DataFrames** - With automatic index and column handling
+- **Pandas DataFrames** - With automatic column handling
 - **Sets** - Converted to list format
 - **1D data** - Single columns for simple lists
 
@@ -154,13 +154,7 @@ If you don't like spreadsheets there is better solution, check out **[df2tables]
 
 
 ## License
-
 This code is licensed under MIT
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues and pull requests.
-
 ---
 
 *Need more control over Excel formatting? Check out the full [xlsxwriter documentation](https://xlsxwriter.readthedocs.io/) for advanced features.*
